@@ -89,6 +89,8 @@ gpasswd -a "$user"
 getent group plugdev && gpasswd -a "$user" plugdev
 getent group games && gpasswd -a "$user" games
 getent group video && gpasswd -a "$user" video
+
+emerge firefox
 emerge -uDN @world
 
 echo "Done!!!"
