@@ -1,6 +1,11 @@
 #!/bin/sh
+# shellcheck source=/dev/null
+echo "Starting within 5 seconds..."
+sleep 5
 
-source /etc/profile
+
+source="/etc/profile"
+. "$source" 
 export PS1="(chroot) ${PS1}"
 emerge-webrsync ; emerge --sync
 eselect profile set "default/linux/amd64/17.1/desktop/gnome"
@@ -11,12 +16,12 @@ emerge --config sys-libs/timezone-data
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 locale-gen
 eselect locale set "en_US"
-env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+env-update ; . "$source" ; export PS1="(chroot) ${PS1}"
 
 # Kernel Part
 emerge --ask sys-kernel/gentoo-sources
 emerge --ask sys-apps/pciutils
-cd /usr/src/linux
+cd /usr/src/linux || exit
 make menuconfig
 make && make modules_install
 make install
@@ -40,7 +45,7 @@ rm /etc/conf.d/net
 touch /etc/conf.d/net
 echo 'config_eth0="dhcp"' >> /etc/conf.d/net
 
-cd /etc/init.d
+cd /etc/init.d || exit
 ln -s net.lo net.eth0
 rc-update add net.eth0 default
 
@@ -85,3 +90,5 @@ getent group plugdev && gpasswd -a "$user" plugdev
 getent group games && gpasswd -a "$user" games
 getent group video && gpasswd -a "$user" video
 emerge -uDN @world
+
+echo "Done!!!"
